@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>每週支出記錄</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    form {
+        margin-bottom: 20px;
+    }
+    input {
+        margin: 5px 0;
+        padding: 8px;
+        width: 300px;
+    }
+    button {
+        padding: 8px 16px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <h3>每週支出記錄</h3>
+    <form id="expenseForm">
+        <label for="date">日期:</label><br>
+        <input type="date" id="date" name="date"><br>
+        <label for="amount">金額:</label><br>
+        <input type="number" id="amount" name="amount"><br>
+        <label for="description">描述:</label><br>
+        <input type="text" id="description" name="description"><br>
+        <button type="button" onclick="addExpense()">新增</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        function addExpense() {
+            const date = document.getElementById('date').value;
+            const amount = document.getElementById('amount').value;
+            const description = document.getElementById('description').value;
+
+            if (date && amount && description) {
+                const expense = { date, amount, description };
+
+                fetch('http://localhost:8080/api/expenses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(expense),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('message').innerText = '新增成功!';
+                    document.getElementById('expenseForm').reset();
+                })
+                .catch((error) => {
+                    document.getElementById('message').innerText = '新增失敗!';
+                    console.error('Error:', error);
+                });
+            } else {
+                document.getElementById('message').innerText = '請填寫所有欄位!';
+            }
+        }
+    </script>
+</body>
+</html>
