@@ -18,7 +18,21 @@
         padding: 8px 16px;
         cursor: pointer;
     }
+    table{
+    	width: 100%;
+     	border-collapse: collapse;
+        margin-top: 20px;
+    }
+     th, td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    
+    
+    
 </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h3>每週支出記錄</h3>
@@ -32,6 +46,23 @@
         <button type="button" onclick="addExpense()">新增</button>
     </form>
     <div id="message"></div>
+    
+    <h3>當週每日支出</h3>
+    <button type="button" onclick="queryAll()">取得當週所有支出</button>
+	<table id="allExpenseTable">
+		<thead>
+		<tr>
+			<th>日期</th>
+			<th>金額</th>
+			<th>描述</th>
+		</tr>	
+	</thead>
+	<tbody>
+	</tbody>
+	</table>
+		
+		
+
 
     <script>
         function addExpense() {
@@ -62,6 +93,32 @@
                 document.getElementById('message').innerText = '請填寫所有欄位!';
             }
         }
+        
+        function queryAll(){
+        	$.ajax({
+        		type:"GET",
+        		url:"http://localhost:8080/api/expenses",
+        		dataType:"json",
+        		success: function(data){
+        			const tbody = document.querySelector('#allExpenseTable tbody');
+					tbody.innerHTML = '';
+					
+					data.forEach(expense => {
+						const row = document.createElement('tr');
+						row.innerHTML = `
+							<td>${expense.date}</td>
+                            <td>${expense.amount}</td>
+                            <td>${expense.description}</td>
+						`;
+						tbody.appendChild(row);
+					});
+        		},
+        		error: function(error){
+        			console.error('Error:', error);
+        		}
+        	});
+        }
+        
     </script>
 </body>
 </html>
